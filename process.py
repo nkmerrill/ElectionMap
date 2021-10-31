@@ -11,10 +11,25 @@ def combineDataSets(geo, data):
         if fips in data:
             d = data[str(int(geo['features'][i]['properties']['fips']))]
             geo['features'][i]['properties']['avg'] = d['averageRatio']
-            geo['features'][i]['properties']['16to20change'] = d['16to20change']
+            geo['features'][i]['properties']['change'] = d['change']
+            geo['features'][i]['properties']['party'] = d['party']
+            geo['features'][i]['properties']['flipped'] = d['flipped']
+            
+            if '2016' in d:
+                geo['features'][i]['properties']['2016dvotes'] = d['2016']['DEMOCRAT']
+                geo['features'][i]['properties']['2016rvotes'] = d['2016']['REPUBLICAN']
+            if '2020' in d:
+                geo['features'][i]['properties']['2020dvotes'] = d['2020']['DEMOCRAT']
+                geo['features'][i]['properties']['2020rvotes'] = d['2020']['REPUBLICAN']
         else:
             geo['features'][i]['properties']['avg'] = 0
-            geo['features'][i]['properties']["16to20change"] = 0
+            geo['features'][i]['properties']["change"] = 0
+            geo['features'][i]['properties']['party'] = "NA"
+            geo['features'][i]['properties']['flipped'] = "false"
+            geo['features'][i]['properties']['2016dvotes'] = 0
+            geo['features'][i]['properties']['2020dvotes'] = 0
+            geo['features'][i]['properties']['2016rvotes'] = 0
+            geo['features'][i]['properties']['2020rvotes'] = 0
 
     return geo
 

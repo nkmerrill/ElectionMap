@@ -13,22 +13,54 @@ def convertToJSON():
                 data[key] = {}
             if rows['year'] not in data[key]:
                 data[key][rows['year']] = {}
-            data[key][rows['year']][rows['party']] = rows['candidatevotes']
+            if rows['mode'] != 'TOTAL':
+                if rows['party'] != 'REPUBLICAN' and rows['party'] != 'DEMOCRAT':
+                    if 'OTHER' not in data[key][rows['year']]:
+                        data[key][rows['year']]['OTHER'] = rows['candidatevotes']
+                    else:
+                        data[key][rows['year']]['OTHER'] = str(int(data[key][rows['year']]['OTHER']) + int(rows['candidatevotes']))
+                else:
+                    if rows['party'] not in data[key][rows['year']]:
+                        data[key][rows['year']][rows['party']] = rows['candidatevotes']
+                    else:
+                        data[key][rows['year']][rows['party']] = str(int(data[key][rows['year']][rows['party']]) + int(rows['candidatevotes']))
+            else:
+                if rows['party'] != 'REPUBLICAN' and rows['party'] != 'DEMOCRAT':
+                    if 'OTHER' not in data[key][rows['year']] or data[key][rows['year']]['OTHER'] == 'NA':
+                        data[key][rows['year']]['OTHER'] = rows['candidatevotes']
+                    elif rows['candidatevotes'] != 'NA':
+                        data[key][rows['year']]['OTHER'] = str(int(data[key][rows['year']]['OTHER']) + int(rows['candidatevotes']))
+                else:
+                    data[key][rows['year']][rows['party']] = rows['candidatevotes']
 
     for i in data:
         for j in data[i]:
             repub = data[i][j]['REPUBLICAN']
             demo = data[i][j]['DEMOCRAT']
-            
+            if 'OTHER' in data[i][j]:
+                other = data[i][j]['OTHER']
+            else:
+                other = 'NA'
+
             if demo != "NA" and repub != "NA":
-                if int(repub) == 0:
-                    data[i][j]['ratio'] = 10
-                elif int(demo) == 0:
+                repub = int(repub)
+                demo = int(demo)
+                other = 0 if other == 'NA' else int(other)
+
+                if repub == 0 or demo == 0:
                     data[i][j]['ratio'] = 0
                 else:
-                    data[i][j]['ratio'] = int(demo)/int(repub)
+                    data[i][j]['ratio'] = max( demo/(demo+repub+other),repub/(demo+repub+other) )
+                    data[i][j]['losratio'] = min(demo/(demo+repub+other),repub/(demo+repub+other))
+                if repub > demo:
+                    data[i][j]['winner'] = 'Republican'
+                elif demo > repub:
+                    data[i][j]['winner'] = 'Democrat'
+                else:
+                    data[i][j]['winner'] = 'Tie'
             else:
                 data[i][j]['ratio'] = 'NA'
+                data[i][j]['winner'] = 'NA'
 
 
     for i in data:
@@ -43,9 +75,20 @@ def convertToJSON():
         data[i]['averageRatio'] = avg/length
 
         if '2020' in data[i] and '2016' in data[i]:
-            data[i]['16to20change'] = float(data[i]['2020']['ratio']) - float(data[i]['2016']['ratio']) 
+            if data[i]['2020']['winner'] == data[i]['2016']['winner']:
+                data[i]['change'] = float(data[i]['2020']['ratio']) - float(data[i]['2016']['ratio']) 
+                data[i]['party'] = data[i]['2020']['winner']
+                data[i]['flipped'] = 'false'
+            else:
+                data[i]['change'] = float(data[i]['2020']['ratio']) - float(data[i]['2016']['losratio'])
+                data[i]['party'] = data[i]['2020']['winner']
+                data[i]['flipped'] = 'true'
         else:
-            data[i]['16to20change'] = 'NA'
+            data[i]['change'] = 'NA'
+            data[i]['party'] = 'NA'
+            data[i]['flipped'] = 'NA'
 
     with open("presdataJSON.json", 'w') as jsonf:
         jsonf.write(json.dumps(data, indent=4))
+
+convertToJSON()
