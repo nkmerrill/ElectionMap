@@ -1,10 +1,10 @@
-#Election Map
+# Election Map
 
 Data used to visual election result delta between 2016 and 2020 presidental elections.
 
 Created for UCCS CS 4420 2021 Fall Semester
 
-#Sources
+# Sources
 Election data taken from Harvard Dataverse MIT Election Data + Science Lab: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ
 
 Geographical data obtained AlbersUSA project by hrbrmstr: https://github.com/hrbrmstr/albersusa used per liscence agreement below:
