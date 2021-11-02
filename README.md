@@ -1,5 +1,5 @@
 # Election Map
-Data used to visual election result delta between 2016 and 2020 presidental elections.
+Map used to visualize election result delta between 2016 and 2020 presidental elections.
 
 Created for UCCS CS 4420 2021 Fall Semester
 
