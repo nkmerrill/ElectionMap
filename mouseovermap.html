@@ -1,150 +1,145 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>Election Data Comp Map</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.js"></script>
-<style>
-body { margin: 0; padding: 0; }
-#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
-</head>
-<body>
-<style>
+    <head>
+        <meta charset="utf-8">
+        <title>Election Data Comp Map</title>
+        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.css" rel="stylesheet">
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.js"></script>
+        <style>
+            body { margin: 0; padding: 0; }
+            #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        </style>
+    </head>
+    <body>
+        <style>
 
-    .mapboxgl-popup {
-        max-width: 1000px;
-        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    }
+            .mapboxgl-popup {
+                max-width: 1000px;
+                font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            }
 
-#features {
-position: absolute;
-right: 30px;
-bottom: 30px;
-height: 25%;
-width: 30%;
-overflow: auto;
-background: rgba(255, 255, 255, 0.8);
-}
-
-
-
-#map canvas {
-cursor: crosshair;
-}
-</style>
-<div id="map"></div>
-<pre id="features"></pre>
-<pre id="clickedfeatures"></pre>
-<script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoibmttZXJyaWxsIiwiYSI6ImNrdTkxbDU0eTAyaXIyb25uaXF2dHlqNDgifQ.ikJdjgUkoSmeBM8nd0N6rw';
-const map = new mapboxgl.Map({
-container: 'map',
-style: 'mapbox://styles/nkmerrill/ckvehkcf724vi14jsk8qb5hds',
-center: [-96, 37.8],
-zoom: 3
-});
-
-function printData(e) {
-const features = map.queryRenderedFeatures(e.point);
- if (features.length == 0) {
-     return '-'
- }
-// Limit the number of properties we're displaying for
-// legibility and performance
-const displayProperties = [
-{'id':'name', 'tag' : 'County: '},
-{'id':'change', 'tag' :'Winning party swing: '},
-{'id':'party', 'tag' :'Winning party: '},
-{'id':'2016dvotes', 'tag' :'2016 Democrat votes: '},
-{'id':'2016rvotes', 'tag' :'2016 Republican votes: '},
-{'id':'2016ovotes', 'tag' :'2016 Third Party votes: '},
-{'id':'2020dvotes', 'tag' :'2020 Democrat votes: '},
-{'id':'2020rvotes', 'tag' :'2020 Republican votes: '},
-{'id':'2020ovotes', 'tag' :'2020 Third Party votes: '}
-];
- 
-const displayFeatures = features.map((feat) => {
-const displayFeat = {}
-displayProperties.forEach((prop) => {
-    if (prop['id'] == 'change') {
-        displayFeat[prop['id']] = String(prop['tag']) + (parseFloat(feat['properties'][prop['id']])*100).toFixed(4) + "%";
-    }
-    else {
-        displayFeat[prop['id']] = String(prop['tag'])+String(feat['properties'][prop['id']]);
-    }
-
-});
-
-return displayFeat;
-});
+            #features {
+                position: absolute;
+                right: 30px;
+                bottom: 30px;
+                height: 140px;
+                width: 30%;
+                overflow: auto;
+                background: rgba(255, 255, 255, 0.8);
+            }
 
 
 
-return Object.values(displayFeatures[displayFeatures.length -1]).join('<br>');
-}
+            #map canvas {
+                cursor: crosshair;
+            }
+        </style>
+        <div id="map"></div>
+        <pre id="features"></pre>
+        <pre id="clickedfeatures"></pre>
+        <script>
+            mapboxgl.accessToken = 'pk.eyJ1IjoibmttZXJyaWxsIiwiYSI6ImNrdTkxbDU0eTAyaXIyb25uaXF2dHlqNDgifQ.ikJdjgUkoSmeBM8nd0N6rw';
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/nkmerrill/ckvehkcf724vi14jsk8qb5hds',
+                center: [-96, 37.8],
+                zoom: 3
+            });
 
- map.on('click',  (e) => {
-    const features = map.queryRenderedFeatures(e.point);
-    if (features.length > 0) {
-        const curPoint = features[0];
-        const fips = curPoint['properties']['fips'];
-        var label;
-	    
-        if (map.getZoom() < 5) {
-            label = [];
-        }
-        else {
-            label = map.queryRenderedFeatures({layers: ['county-polygon-d11tw0'], filter: ['==', 'fips', fips ]});
-        }
-        var coord
-        if (label.length == 0) {
-            coord = [e.lngLat.lng, e.lngLat.lat];
-        }
-        else{
-        //Zoomed close enough for label, center on that.
-        coord = label[0].geometry.coordinates;
-        }
-        const coordinates = coord.slice();
-
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            function printData(e) {
+                const features = map.queryRenderedFeatures(e.point);
+                if (features.length == 0) {
+                        return '-'
                 }
 
-        new mapboxgl.Popup()
-                    .setHTML(printData(e))
-                    .setLngLat(coordinates)
-                    .addTo(map);
-    }
-});
+                // Limit the number of properties we're displaying for
+                // legibility and performance
+                const displayProperties = [
+                    {'id':'name', 'tag' : 'County: '},
+                    {'id':'change', 'tag' :'Winning party swing: '},
+                    {'id':'party', 'tag' :'Winning party: '},
+                    {'id':'2016dvotes', 'tag' :'2016 Democrat votes: '},
+                    {'id':'2016rvotes', 'tag' :'2016 Republican votes: '},
+                    {'id':'2016ovotes', 'tag' :'2016 Third Party votes: '},
+                    {'id':'2020dvotes', 'tag' :'2020 Democrat votes: '},
+                    {'id':'2020rvotes', 'tag' :'2020 Republican votes: '},
+                    {'id':'2020ovotes', 'tag' :'2020 Third Party votes: '}
+                ];
+                
+                const displayFeatures = features.map((feat) => {
+                    const displayFeat = {}
+                    displayProperties.forEach((prop) => {
+                        if (prop['id'] == 'change') 
+                            displayFeat[prop['id']] = "<span class="+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class="+prop['id']+">" + (parseFloat(feat['properties'][prop['id']])*100).toFixed(4) + "%</span>";
+                        else 
+                            displayFeat[prop['id']] = "<span class="+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class="+prop['id']+">" + String(feat['properties'][prop['id']]) + "</span>";
+                    });
 
-        // // Change the cursor to a pointer when the mouse is over the places layer.
-        // map.on('mouseenter', 'county-polygon-d11tw0', () => {
-        //     map.getCanvas().style.cursor = 'pointer';
-        // });
+                    return displayFeat;
+                });
 
-        // // Change it back to a pointer when it leaves.
-        // map.on('mouseleave', 'county-polygon-d11tw0', () => {
-        //     map.getCanvas().style.cursor = '';
-        // });
 
-        // // Change the cursor to a pointer when the mouse is over the places layer.
-        // map.on('mouseenter', 'avg20162020-98wt9e', () => {
-        //     map.getCanvas().style.cursor = 'pointer';
-        // });
 
-        // // Change it back to a pointer when it leaves.
-        // map.on('mouseleave', 'avg20162020-98wt9e', () => {
-        //     map.getCanvas().style.cursor = '';
-        // });
+                return Object.values(displayFeatures[displayFeatures.length -1]).join('<br>');
+            }
 
-map.on('mousemove', (e) => {
-	document.getElementById('features').innerHTML = printData(e,'features');
-});
+            map.on('click',  (e) => {
+                const features = map.queryRenderedFeatures(e.point);
+                if (features.length > 0) {
+                    const curPoint = features[0];
+                    const fips = curPoint['properties']['fips'];
+                    var label;
+                    
+                    if (map.getZoom() < 5) 
+                        label = [];
+                    else 
+                        label = map.queryRenderedFeatures({layers: ['county-polygon-d11tw0'], filter: ['==', 'fips', fips ]});
+                    
+                    var coord;
+                    if (label.length == 0)
+                        coord = [e.lngLat.lng, e.lngLat.lat];
+                    else
+                        //Zoomed close enough for label, center on that.
+                        coord = label[0].geometry.coordinates;
+                    const coordinates = coord.slice();
 
-</script>
- 
-</body>
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                            }
+
+                    new mapboxgl.Popup()
+                                .setHTML(printData(e))
+                                .setLngLat(coordinates)
+                                .addTo(map);
+                }
+            });
+
+                    // // Change the cursor to a pointer when the mouse is over the places layer.
+                    // map.on('mouseenter', 'county-polygon-d11tw0', () => {
+                    //     map.getCanvas().style.cursor = 'pointer';
+                    // });
+
+                    // // Change it back to a pointer when it leaves.
+                    // map.on('mouseleave', 'county-polygon-d11tw0', () => {
+                    //     map.getCanvas().style.cursor = '';
+                    // });
+
+                    // // Change the cursor to a pointer when the mouse is over the places layer.
+                    // map.on('mouseenter', 'avg20162020-98wt9e', () => {
+                    //     map.getCanvas().style.cursor = 'pointer';
+                    // });
+
+                    // // Change it back to a pointer when it leaves.
+                    // map.on('mouseleave', 'avg20162020-98wt9e', () => {
+                    //     map.getCanvas().style.cursor = '';
+                    // });
+
+            map.on('mousemove', (e) => {
+                document.getElementById('features').innerHTML = printData(e,'features');
+            });
+
+        </script>
+    
+    </body>
 </html>
