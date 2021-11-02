@@ -12,7 +12,11 @@ Geographical data obtained AlbersUSA project by hrbrmstr: https://github.com/hrb
 
 # Credits
 Nicholos Merrill
+
 Justin Zarkovacki
+
 Nathan Shulkin
+
 Connor Wooten
+
 Tyler Semple
