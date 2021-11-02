@@ -8,11 +8,11 @@
 
 import json
 import os
-from csvtojson import convertToJSON;
+from csvtojson import convertToJSON
 
 ### File Paths ###
 geoSourceFile = os.path.join(r"albersusa", r"composite_us_counties.geojson")
-dataSourceFile = os.path.join(r"mit", r"presdata2012-2020.csv")
+dataSourceFile = os.path.join(r"mit", r"presdata2012-2020DCFIX.csv")
 dataintermFile = os.path.join(r"output", r"presdataJSON.json")
 outputFile = os.path.join(r"output", r"output.geojson")
 
@@ -68,8 +68,8 @@ def combineDataSets(geo, data):
 
 # genOutput(res)
 # Outputs res data into outputFile as JSON.
-def genOutput(res):
-    with open(outputFile, 'w') as jsonf:
+def genOutput(res, output):
+    with open(output, 'w') as jsonf:
         jsonf.write(json.dumps(res))
 
 ### MAIN ###
@@ -79,4 +79,4 @@ geo = importSource(geoSourceFile)
 data = importSource(dataintermFile)
 res = combineDataSets(geo,data)
 
-genOutput(res)
+genOutput(res, outputFile)

@@ -8426,9 +8426,17 @@
             "ratio": 0.9086382152999987,
             "losratio": 0.040874744593083774
         },
-        "change": "NA",
-        "party": "NA",
-        "flipped": "NA"
+        "2020": {
+            "DEMOCRAT": "317323",
+            "OTHER": "8447",
+            "REPUBLICAN": "18586",
+            "winner": "Democrat",
+            "ratio": 0.9214969392140692,
+            "losratio": 0.05397321376714795
+        },
+        "change": 0.012858723914070502,
+        "party": "Democrat",
+        "flipped": "false"
     },
     "12001": {
         "2012": {
@@ -90306,13 +90314,13 @@
         },
         "2020": {
             "DEMOCRAT": "1276",
-            "OTHER": "8460",
+            "OTHER": "13",
             "REPUBLICAN": "85",
             "winner": "Democrat",
-            "ratio": 0.1299256694837593,
-            "losratio": 0.008654923123918135
+            "ratio": 0.9286754002911208,
+            "losratio": 0.06186317321688501
         },
-        "change": -0.4773193257497965,
+        "change": 0.32143040505756504,
         "party": "Democrat",
         "flipped": "false"
     },
