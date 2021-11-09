@@ -13,12 +13,14 @@
     </head>
     <body>
         <style>
-
+            /* Edit Style here*/
+            /*Change all mouse click box */
             .mapboxgl-popup {
                 max-width: 1000px;
                 font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
             }
 
+            /* Change the mouseover box */
             #features {
                 position: absolute;
                 right: 30px;
@@ -28,9 +30,131 @@
                 overflow: auto;
                 background: rgba(255, 255, 255, 0.8);
             }
+            
+            /* Change the 'County' text format */
+            .tname-tag {
 
+            }
 
+            /* Change the actual name of the county text format */
+            .tname {
 
+            }
+
+            /* Change the 'Winning party swing: ' text format */
+            .tchange-tag {
+
+            }
+
+            /* Change the format of the actual percentage change text format */
+            .tchange {
+
+            }
+
+            /* Change the 'Winning party:' text format IF republicans win */
+            .tpartyr-tag {
+
+            }
+
+            /* Change the winning party text format IF republicans win */
+            .tpartyr {
+                v
+
+            }
+
+            /* Change the 'Winning party:' text format IF democrats win */
+            .tpartyd-tag {
+
+            }
+
+            /* Change the winning party text format IF democrats win */
+            .tpartyd {
+
+            }
+
+            /* Change the 'Winning party:' text format IF a third party wins */
+            .tpartyo-tag {
+
+            }
+
+            /* Change the winning party text format IF a third party wins */
+            .tpartyo {
+
+            }
+
+            /* Change the 'Winning party:' text format IF there's no winner */
+            .tpartyu-tag {
+
+            }       
+
+            /* Change the winning party text format IF there is no winner */
+            .tpartyu {
+
+            }     
+
+            /* Change the '2016 Democrat votes: ' text format */
+            .t2016dvotes-tag {
+                color: blue;
+            }        
+            
+            /* Change the format of the actual number of votes for democrats in 2016 */
+            .t2016dvotes {
+
+            }   
+
+            /* Change the '2016 Republican votes: ' text format */
+            .t2016rvotes-tag {
+                color: red;
+            }        
+
+            /* Change the format of the actual number of votes for republicans in 2016 */
+            .t2016rvotes {
+
+            } 
+
+            /* Change the '2016 Third Party votes: ' text format */
+            .t2016ovotes-tag {
+                color: green;
+            }        
+
+            /* Change the format of the actual number of votes for third parties in 2016 */
+            .t 2016ovotes {
+                
+            } 
+
+            /* Change the '2020 Democrat votes: ' text format */
+            .t2020dvotes-tag {
+                color: blue;
+            }        
+
+            /* Change the format of the actual number of votes for democrats in 2020 */
+            .t2020dvotes {
+
+            }   
+
+            /* Change the '2020 Republican votes: ' text format */
+            .t2020rvotes-tag {
+                color: red;
+            }        
+
+            /* Change the format of the actual number of votes for republicans in 2020 */
+            .t2020rvotes {
+
+            } 
+
+            /* Change the '2020 Third Party votes: ' text format */
+            .t2020ovotes-tag {
+                color: green;
+            }        
+
+            /* Change the format of the actual number of votes for third parties in 2020 */
+            .t2020ovotes {
+
+            } 
+
+            /* End edit style */
+
+            /* Do not change */
             #map canvas {
                 cursor: crosshair;
             }
@@ -71,9 +195,18 @@
                     const displayFeat = {}
                     displayProperties.forEach((prop) => {
                         if (prop['id'] == 'change') 
-                            displayFeat[prop['id']] = "<span class="+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class="+prop['id']+">" + (parseFloat(feat['properties'][prop['id']])*100).toFixed(4) + "%</span>";
+                            displayFeat[prop['id']] = "<span class=t"+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+">" + (parseFloat(feat['properties'][prop['id']])*100).toFixed(4) + "%</span>";
+                        else if (prop['id'] == 'party')
+                            if (prop['tag'] == 'Republican')
+                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"r-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"r>" + String(feat['properties'][prop['id']]) + "</span>";                                
+                            else if (prop['tag'] == 'Democrat')
+                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"d-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"d>" + String(feat['properties'][prop['id']]) + "</span>";   
+                            else if (prop['tag'] == 'Other')
+                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"o-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"o>" + String(feat['properties'][prop['id']]) + "</span>";   
+                            else 
+                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"u-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"u>" + String(feat['properties'][prop['id']]) + "</span>";   
                         else 
-                            displayFeat[prop['id']] = "<span class="+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class="+prop['id']+">" + String(feat['properties'][prop['id']]) + "</span>";
+                            displayFeat[prop['id']] = "<span class=t"+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+">" + String(feat['properties'][prop['id']]) + "</span>";
                     });
 
                     return displayFeat;
