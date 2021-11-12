@@ -23,17 +23,18 @@
             /* Change the mouseover box */
             #features {
                 position: absolute;
+                padding: 10px;
+                border-radius: 5px;
+                font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
                 right: 30px;
                 bottom: 30px;
-                height: 140px;
-                width: 30%;
                 overflow: auto;
-                background: rgba(255, 255, 255, 0.8);
+                background: rgba(255, 255, 255, 1);
             }
             
             /* Change the 'County' text format */
             .tname-tag {
-
+                font-weight: bold;
             }
 
             /* Change the actual name of the county text format */
@@ -43,7 +44,7 @@
 
             /* Change the 'Winning party swing: ' text format */
             .tchange-tag {
-
+                font-weight: bold;
             }
 
             /* Change the format of the actual percentage change text format */
@@ -53,7 +54,8 @@
 
             /* Change the 'Winning party:' text format IF republicans win */
             .tpartyr-tag {
-              
+                font-weight: bold;      
+                color: red;       
             }
 
             /* Change the winning party text format IF republicans win */
@@ -63,7 +65,8 @@
 
             /* Change the 'Winning party:' text format IF democrats win */
             .tpartyd-tag {
-                
+                font-weight: bold;   
+                color: blue;          
             }
 
             /* Change the winning party text format IF democrats win */
@@ -73,7 +76,8 @@
 
             /* Change the 'Winning party:' text format IF a third party wins */
             .tpartyo-tag {
-
+                font-weight: bold;
+                color: green;
             }
 
             /* Change the winning party text format IF a third party wins */
@@ -83,7 +87,7 @@
 
             /* Change the 'Winning party:' text format IF there's no winner */
             .tpartyu-tag {
-
+                font-weight: bold;
             }       
 
             /* Change the winning party text format IF there is no winner */
@@ -94,6 +98,7 @@
             /* Change the '2016 Democrat votes: ' text format */
             .t2016dvotes-tag {
                 color: blue;
+                font-weight: bold;
             }        
             
             /* Change the format of the actual number of votes for democrats in 2016 */
@@ -104,6 +109,7 @@
             /* Change the '2016 Republican votes: ' text format */
             .t2016rvotes-tag {
                 color: red;
+                font-weight: bold;
             }        
 
             /* Change the format of the actual number of votes for republicans in 2016 */
@@ -114,16 +120,18 @@
             /* Change the '2016 Third Party votes: ' text format */
             .t2016ovotes-tag {
                 color: green;
+                font-weight: bold;
             }        
 
             /* Change the format of the actual number of votes for third parties in 2016 */
-            .t 2016ovotes {
+            .t2016ovotes {
                 
             } 
 
             /* Change the '2020 Democrat votes: ' text format */
             .t2020dvotes-tag {
                 color: blue;
+                font-weight: bold;
             }        
 
             /* Change the format of the actual number of votes for democrats in 2020 */
@@ -134,6 +142,7 @@
             /* Change the '2020 Republican votes: ' text format */
             .t2020rvotes-tag {
                 color: red;
+                font-weight: bold;
             }        
 
             /* Change the format of the actual number of votes for republicans in 2020 */
@@ -144,12 +153,25 @@
             /* Change the '2020 Third Party votes: ' text format */
             .t2020ovotes-tag {
                 color: green;
+                font-weight: bold;
             }        
 
             /* Change the format of the actual number of votes for third parties in 2020 */
             .t2020ovotes {
 
             } 
+
+            .tparty-div {
+                border-bottom: 1px dashed gray;
+                padding-bottom: 5px;
+                margin-bottom: 5px;
+            }
+
+            .t2016ovotes-div {
+                border-bottom: 1px dashed gray;
+                padding-bottom: 5px;
+                margin-bottom: 5px;
+            }
 
             /* End edit style */
 
@@ -160,7 +182,6 @@
         </style>
         <div id="map"></div>
         <pre id="features"></pre>
-        <pre id="clickedfeatures"></pre>
         <script>
             mapboxgl.accessToken = 'pk.eyJ1IjoibmttZXJyaWxsIiwiYSI6ImNrdTkxbDU0eTAyaXIyb25uaXF2dHlqNDgifQ.ikJdjgUkoSmeBM8nd0N6rw';
             const map = new mapboxgl.Map({
@@ -170,11 +191,7 @@
                 zoom: 3
             });
 
-            function printData(e) {
-                const features = map.queryRenderedFeatures(e.point);
-                if (features.length == 0) {
-                        return '-'
-                }
+            function printData(curPoint) {
 
                 // Limit the number of properties we're displaying for
                 // legibility and performance
@@ -190,36 +207,51 @@
                     {'id':'2020ovotes', 'tag' :'2020 Third Party votes: '}
                 ];
                 
-                const displayFeatures = features.map((feat) => {
+                const displayFeatures = (feat) => {
                     const displayFeat = {}
                     displayProperties.forEach((prop) => {
                         if (prop['id'] == 'change') 
-                            displayFeat[prop['id']] = "<span class=t"+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+">" + (parseFloat(feat['properties'][prop['id']])*100).toFixed(4) + "%</span>";
+                            displayFeat[prop['id']] = "<div class= t"+prop['id']+"-div><span class=t"+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+">" + (parseFloat(feat['properties'][prop['id']])*100).toFixed(4) + "%</span></div>";
                         else if (prop['id'] == 'party')
-                            if (prop['tag'] == 'Republican')
-                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"r-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"r>" + String(feat['properties'][prop['id']]) + "</span>";                                
-                            else if (prop['tag'] == 'Democrat')
-                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"d-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"d>" + String(feat['properties'][prop['id']]) + "</span>";   
-                            else if (prop['tag'] == 'Other')
-                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"o-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"o>" + String(feat['properties'][prop['id']]) + "</span>";   
+                            if (feat['properties'][prop['id']] == 'Republican')
+                                displayFeat[prop['id']] = "<div class= t"+prop['id']+"-div><span class=t"+prop['id']+"r-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"r>" + String(feat['properties'][prop['id']]) + "</span></div>";                                
+                            else if (feat['properties'][prop['id']] == 'Democrat')
+                                displayFeat[prop['id']] = "<div class= t"+prop['id']+"-div><span class=t"+prop['id']+"d-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"d>" + String(feat['properties'][prop['id']]) + "</span></div>";   
+                            else if (feat['properties'][prop['id']] == 'Other')
+                                displayFeat[prop['id']] = "<div class= t"+prop['id']+"-div><span class=t"+prop['id']+"o-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"o>" + String(feat['properties'][prop['id']]) + "</span></div>";   
                             else 
-                                displayFeat[prop['id']] = "<span class=t"+prop['id']+"u-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"u>" + String(feat['properties'][prop['id']]) + "</span>";   
+                                displayFeat[prop['id']] = "<div class= t"+prop['id']+"-div><span class=t"+prop['id']+"u-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+"u>" + String(feat['properties'][prop['id']]) + "</span></div>";   
                         else 
-                            displayFeat[prop['id']] = "<span class=t"+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+">" + String(feat['properties'][prop['id']]) + "</span>";
+                            displayFeat[prop['id']] = "<div class= t"+prop['id']+"-div><span class=t"+prop['id']+"-tag>" + String(prop['tag']) + "</span> <span class=t"+prop['id']+">" + String(feat['properties'][prop['id']]) + "</span></div>";
                     });
 
                     return displayFeat;
-                });
+                };
 
 
 
-                return Object.values(displayFeatures[displayFeatures.length -1]).join('<br>');
+                return Object.values(displayFeatures(curPoint)).join('');
+            }
+
+            function checkValidLayer(features) {
+                var i = 0;
+                        
+                while(i != features.length && (features[i]['layer']['id'] == "composite-us-states-2hcoev" || features[i]['layer']['id'] == 'state-labels-0ha4qr') ) {
+                    i++;
+                }
+
+                if (i == features.length)
+                    return -1;
+                else
+                    return i;
             }
 
             map.on('click',  (e) => {
                 const features = map.queryRenderedFeatures(e.point);
-                if (features.length > 0) {
-                    const curPoint = features[0];
+                var i = checkValidLayer(features);
+                if (i != -1) {
+                    var curPoint = features[i];
+
                     const fips = curPoint['properties']['fips'];
                     var label;
                     
@@ -241,7 +273,7 @@
                             }
 
                     new mapboxgl.Popup()
-                                .setHTML(printData(e))
+                                .setHTML(printData(curPoint))
                                 .setLngLat(coordinates)
                                 .addTo(map);
                 }
@@ -268,7 +300,10 @@
                     // });
 
             map.on('mousemove', (e) => {
-                document.getElementById('features').innerHTML = printData(e,'features');
+                const features = map.queryRenderedFeatures(e.point);
+                var i = checkValidLayer(features);
+                if (i != -1)
+                    document.getElementById('features').innerHTML = printData(features[i]);
             });
 
         </script>
