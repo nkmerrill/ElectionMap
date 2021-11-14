@@ -234,16 +234,13 @@
             }
 
             function checkValidLayer(features) {
-                var i = 0;
+                var i = features.length - 1;
                         
-                while(i != features.length && (features[i]['layer']['id'] == "composite-us-states-2hcoev" || features[i]['layer']['id'] == 'state-labels-0ha4qr') ) {
-                    i++;
+                while(i != -1 && (features[i]['layer']['id'] == "composite-us-states-2hcoev" || features[i]['layer']['id'] == 'state-labels-0ha4qr') ) {
+                    i--;
                 }
 
-                if (i == features.length)
-                    return -1;
-                else
-                    return i;
+                return i;
             }
 
             map.on('click',  (e) => {
