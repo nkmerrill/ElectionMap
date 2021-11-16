@@ -1,7 +1,7 @@
 # Election Map
 This map is used to visualize the swings in presidential election voting by county between the 2016 and 2020 presidential elections.
 
-To access the map, go to this link: https://nathanshulkin.github.io/mapz/
+To access the map, go to this link: https://nkmerrill.com/map.html
 and the map should load and display.
 
 The color on the map represents the % swing for that county, not necessarily the winning party. So, if Red won in a county by 10% in 2016, and then won again in that county in 2020 but by only 5%, then that county would display as Blue because the county swung towards Blue; even though Red was the winning party both times. This is because this map focuses on changes in voting for a county as opposed to just displaying standard election results for a county.
